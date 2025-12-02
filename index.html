@@ -4,339 +4,101 @@
    <meta charset="UTF-8">
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
    <title>Snohomish River Data Graphs</title>
-   <!-- 1. Include Tailwind CSS for styling -->
    <script src="https://cdn.tailwindcss.com"></script>
-  
-   <!-- 2. Include Chart.js for graphing -->
    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  
-   <!-- 3. Use the Inter font family -->
    <style>
-       body {
-           font-family: 'Inter', sans-serif;
-           background-color: #f3f4f6; /* Light gray background */
-       }
+       body { font-family: 'Inter', sans-serif; background-color: #f3f4f6; }
        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
    </style>
 </head>
 <body class="p-4 md:p-8">
-
-
+ 
    <div class="max-w-7xl mx-auto">
-       <!-- Increased margin-bottom for better spacing -->
        <h1 class="text-3xl font-bold text-gray-900 mb-8">
            Snohomish River Research: Data Visualization
        </h1>
 
+       <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
 
-       <!-- Grid layout for the charts -->
-       <div class="grid grid-cols-1 lg:grid-cols-2 gap-8"> <!-- Increased gap -->
-
-
-           <!-- Chart 1: Grouped Bar Chart -->
-           <!-- Updated card styling: more padding, subtle border, larger shadow -->
-           <div class="bg-white p-8 rounded-lg shadow-lg border border-gray-200">
+           <!-- Figure 1 -->
+           <figure class="bg-white p-8 rounded-lg shadow-lg border border-gray-200">
                <h2 class="text-xl font-semibold mb-4 text-gray-800">Species Richness by Site (2018 vs. 2023)</h2>
-               <div class="h-96">
-                   <canvas id="barChart"></canvas>
-               </div>
-           </div>
+               <div class="h-96"><canvas id="barChart"></canvas></div>
+               <figcaption class="mt-6 pt-4 border-t border-gray-300 text-sm text-gray-700 leading-relaxed">
+                   <strong>Figure 1.</strong> Species richness (number of unique species observed on the boat) at three Snohomish River estuary sites in October 2018 and October 2023. Species richness increased at all three sites from 2018 to 2023.
+               </figcaption>
+           </figure>
 
-
-           <!-- Chart 2: Scatter Plot (Clarity vs. Richness) -->
-           <div class="bg-white p-8 rounded-lg shadow-lg border border-gray-200">
+           <!-- Figure 2 -->
+           <figure class="bg-white p-8 rounded-lg shadow-lg border border-gray-200">
                <h2 class="text-xl font-semibold mb-4 text-gray-800">Water Clarity vs. Species Richness</h2>
-               <div class="h-96">
-                   <canvas id="scatterClarityChart"></canvas>
-               </div>
-           </div>
+               <div class="h-96"><canvas id="scatterClarityChart"></canvas></div>
+               <figcaption class="mt-6 pt-4 border-t border-gray-300 text-sm text-gray-700 leading-relaxed">
+                   <strong>Figure 2.</strong> Water clarity (Secchi disk depth in meters) vs. species richness for all six sampling events. Secchi disk was lowered until no longer visible.
+               </figcaption>
+           </figure>
 
-
-           <!-- Chart 3: Scatter Plot (Temperature vs. Richness) -->
-           <div class="bg-white p-8 rounded-lg shadow-lg border border-gray-200 lg:col-span-2">
+           <!-- Figure 3 -->
+           <figure class="bg-white p-8 rounded-lg shadow-lg border border-gray-200 lg:col-span-2">
                <h2 class="text-xl font-semibold mb-4 text-gray-800">Temperature vs. Species Richness</h2>
-               <div class="h-96">
-                   <canvas id="scatterTempChart"></canvas>
-               </div>
-           </div>
-
+               <div class="h-96"><canvas id="scatterTempChart"></canvas></div>
+               <figcaption class="mt-6 pt-4 border-t border-gray-300 text-sm text-gray-700 leading-relaxed">
+                   <strong>Figure 3.</strong> Water temperature (°C, measured with Castaway/EXO sonde) vs. species richness. Higher species richness was observed in the warmer 2023 samples.
+               </figcaption>
+           </figure>
 
        </div>
    </div>
 
-
    <script>
-       // Data parsed from the "Sample Data.csv" file.
        const rawData = [
-           { site: 'Log Skid', year: 2018, date: '2018-10-17', temp: 12.59, richness: 4, clarity: 3.5, tide: 'Flooding' },
-           { site: 'Langus', year: 2018, date: '2018-10-16', temp: 12.43, richness: 5, clarity: 4.0, tide: 'Ebbing' },
-           { site: '10th Street', year: 2018, date: '2018-10-19', temp: 12.67, richness: 2, clarity: 3.0, tide: 'Flooding' },
-           { site: 'Log Skid', year: 2023, date: '2023-10-18', temp: 12.80, richness: 9, clarity: 5.75, tide: 'Ebbing' },
-           { site: 'Langus', year: 2023, date: '2023-10-18', temp: 12.89, richness: 7, clarity: 3.5, tide: 'Ebbing' },
-           { site: '10th Street', year: 2023, date: '2023-10-18', temp: 12.94, richness: 12, clarity: 4.63, tide: 'Ebbing' }
+           { site: 'Log Skid', year: 2018, temp: 12.59, richness: 4, clarity: 3.5 },
+           { site: 'Langus', year: 2018, temp: 12.43, richness: 5, clarity: 4.0 },
+           { site: '10th Street', year: 2018, temp: 12.67, richness: 2, clarity: 3.0 },
+           { site: 'Log Skid', year: 2023, temp: 12.80, richness: 9, clarity: 5.75 },
+           { site: 'Langus', year: 2023, temp: 12.89, richness: 7, clarity: 3.5 },
+           { site: '10th Street', year: 2023, temp: 12.94, richness: 12, clarity: 4.63 }
        ];
 
+       const siteColors = { 'Log Skid': 'rgba(239,68,68,0.8)', 'Langus': 'rgba(59,130,246,0.8)', '10th Street': 'rgba(16,185,129,0.8)' };
 
-       // Define colors for each site
-       const siteColors = {
-           'Log Skid': 'rgba(239, 68, 68, 0.8)',   // Red
-           'Langus': 'rgba(59, 130, 246, 0.8)',    // Blue
-           '10th Street': 'rgba(16, 185, 129, 0.8)' // Green
-       };
+       // Bar chart
+       new Chart(document.getElementById('barChart'), {
+           type: 'bar',
+           data: { labels: ['Log Skid','Langus','10th Street'],
+                   datasets: [{ label: '2018', data: [4,5,2], backgroundColor: 'rgba(156,163,175,0.7)' },
+                              { label: '2023', data: [9,7,12], backgroundColor: 'rgba(59,130,246,0.7)' }]},
+           options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'top' } },
+                      scales: { y: { beginAtZero: true, title: { display: true, text: 'Species Count' }}} }
+       });
 
+       // Clarity scatter
+       new Chart(document.getElementById('scatterClarityChart'), {
+           type: 'scatter',
+           data: { datasets: ['Log Skid','Langus','10th Street'].map(site => ({
+               label: site,
+               data: rawData.filter(d=>d.site===site).map(d=>({x:d.clarity,y:d.richness})),
+               backgroundColor: siteColors[site],
+               pointRadius: 10
+           }))},
+           options: { responsive: true, maintainAspectRatio: false,
+                      scales: { x: { title: { display: true, text: 'Water Clarity (Secchi depth, m)' }},
+                                y: { beginAtZero: true, title: { display: true, text: 'Species Richness' }}}}
+       });
 
-       // --- Chart 1: Grouped Bar Chart ---
-       (function() {
-           const ctx = document.getElementById('barChart').getContext('2d');
-          
-           const sites = ['Log Skid', 'Langus', '10th Street'];
-           const data2018 = sites.map(site => {
-               const entry = rawData.find(d => d.site === site && d.year === 2018);
-               return entry ? entry.richness : 0;
-           });
-           const data2023 = sites.map(site => {
-               const entry = rawData.find(d => d.site === site && d.year === 2023);
-               return entry ? entry.richness : 0;
-           });
-
-
-           new Chart(ctx, {
-               type: 'bar',
-               data: {
-                   labels: sites,
-                   datasets: [
-                       {
-                           label: '2018 Species Richness',
-                           data: data2018,
-                           backgroundColor: 'rgba(156, 163, 175, 0.7)', // Gray
-                           borderColor: 'rgba(156, 163, 175, 1)',
-                           borderWidth: 1
-                       },
-                       {
-                           label: '2023 Species Richness',
-                           data: data2023,
-                           backgroundColor: 'rgba(59, 130, 246, 0.7)', // Blue
-                           borderColor: 'rgba(59, 130, 246, 1)',
-                           borderWidth: 1
-                       }
-                   ]
-               },
-               options: {
-                   responsive: true,
-                   maintainAspectRatio: false,
-                   animation: {
-                       duration: 1500,
-                       easing: 'easeInOutCubic'
-                   },
-                   scales: {
-                       y: {
-                           beginAtZero: true,
-                           title: {
-                               display: true,
-                               text: 'Species Count'
-                           },
-                           grid: {
-                               color: 'rgba(0, 0, 0, 0.05)' // Softer grid lines
-                           }
-                       },
-                       x: {
-                            title: {
-                               display: true,
-                               text: 'Site'
-                           },
-                            grid: {
-                               display: false // Hide x-axis grid lines for bar chart
-                           }
-                       }
-                   },
-                   plugins: {
-                       tooltip: {
-                           mode: 'index',
-                           intersect: false,
-                       },
-                       legend: {
-                           position: 'top',
-                       }
-                   }
-               }
-           });
-       })();
-
-
-       // --- Chart 2: Scatter Plot (Clarity vs. Richness) ---
-       (function() {
-           const ctx = document.getElementById('scatterClarityChart').getContext('2d');
-          
-           const scatterData = {
-               'Log Skid': rawData.filter(d => d.site === 'Log Skid').map(d => ({ x: d.clarity, y: d.richness })),
-               'Langus': rawData.filter(d => d.site === 'Langus').map(d => ({ x: d.clarity, y: d.richness })),
-               '10th Street': rawData.filter(d => d.site === '10th Street').map(d => ({ x: d.clarity, y: d.richness })),
-           };
-
-
-           new Chart(ctx, {
-               type: 'scatter',
-               data: {
-                   datasets: [
-                       {
-                           label: 'Log Skid',
-                           data: scatterData['Log Skid'],
-                           backgroundColor: siteColors['Log Skid'],
-                           pointRadius: 8,
-                           pointHoverRadius: 10
-                       },
-                       {
-                           label: 'Langus',
-                           data: scatterData['Langus'],
-                           backgroundColor: siteColors['Langus'],
-                           pointRadius: 8,
-                           pointHoverRadius: 10
-                       },
-                       {
-                           label: '10th Street',
-                           data: scatterData['10th Street'],
-                           backgroundColor: siteColors['10th Street'],
-                           pointRadius: 8,
-                           pointHoverRadius: 10
-                       }
-                   ]
-               },
-               options: {
-                   responsive: true,
-                   maintainAspectRatio: false,
-                   animation: {
-                       duration: 1500,
-                       easing: 'easeInOutCubic'
-                   },
-                   scales: {
-                       x: {
-                           title: {
-                               display: true,
-                               text: 'Water Clarity (meters)'
-                           },
-                           beginAtZero: true,
-                           grid: {
-                               color: 'rgba(0, 0, 0, 0.05)' // Softer grid lines
-                           }
-                       },
-                       y: {
-                           title: {
-                               display: true,
-                               text: 'Species Richness'
-                           },
-                           beginAtZero: true,
-                           grid: {
-                               color: 'rgba(0, 0, 0, 0.05)' // Softer grid lines
-                           }
-                       }
-                   },
-                   plugins: {
-                       tooltip: {
-                           callbacks: {
-                               label: function(context) {
-                                   let label = context.dataset.label || '';
-                                   if (label) {
-                                       label += ': ';
-                                   }
-                                   label += `(Clarity: ${context.parsed.x}, Richness: ${context.parsed.y})`;
-                                   return label;
-                               }
-                           }
-                       }
-                   }
-               }
-           });
-       })();
-
-
-       // --- Chart 3: Scatter Plot (Temperature vs. Richness) ---
-       (function() {
-           const ctx = document.getElementById('scatterTempChart').getContext('2d');
-          
-           const scatterData = {
-               'Log Skid': rawData.filter(d => d.site === 'Log Skid').map(d => ({ x: d.temp, y: d.richness })),
-               'Langus': rawData.filter(d => d.site === 'Langus').map(d => ({ x: d.temp, y: d.richness })),
-               '10th Street': rawData.filter(d => d.site === '10th Street').map(d => ({ x: d.temp, y: d.richness })),
-           };
-
-
-           new Chart(ctx, {
-               type: 'scatter',
-               data: {
-                   datasets: [
-                       {
-                           label: 'Log Skid',
-                           data: scatterData['Log Skid'],
-                           backgroundColor: siteColors['Log Skid'],
-                           pointRadius: 8,
-                           pointHoverRadius: 10
-                       },
-                       {
-                           label: 'Langus',
-                           data: scatterData['Langus'],
-                           backgroundColor: siteColors['Langus'],
-                           pointRadius: 8,
-                           pointHoverRadius: 10
-                       },
-                       {
-                           label: '10th Street',
-                           data: scatterData['10th Street'],
-                           backgroundColor: siteColors['10th Street'],
-                           pointRadius: 8,
-                           pointHoverRadius: 10
-                       }
-                   ]
-               },
-               options: {
-                   responsive: true,
-                   maintainAspectRatio: false,
-                   animation: {
-                       duration: 1500,
-                       easing: 'easeInOutCubic'
-                   },
-                   scales: {
-                       x: {
-                           title: {
-                               display: true,
-                               text: 'Temperature (°C)'
-                           },
-                           min: 12,
-                           max: 13.5,
-                           grid: {
-                               color: 'rgba(0, 0, 0, 0.05)' // Softer grid lines
-                           }
-                       },
-                       y: {
-                           title: {
-                               display: true,
-                               text: 'Species Richness'
-                           },
-                           beginAtZero: true,
-                           grid: {
-                               color: 'rgba(0, 0, 0, 0.05)' // Softer grid lines
-                           }
-                       }
-                   },
-                   plugins: {
-                       tooltip: {
-                           callbacks: {
-                               label: function(context) {
-                                   let label = context.dataset.label || '';
-                                   if (label) {
-                                       label += ': ';
-                                   }
-                                   label += `(Temp: ${context.parsed.x}, Richness: ${context.parsed.y})`;
-                                   return label;
-                               }
-                           }
-                       }
-                   }
-               }
-           });
-       })();
+       // Temperature scatter
+       new Chart(document.getElementById('scatterTempChart'), {
+           type: 'scatter',
+           data: { datasets: ['Log Skid','Langus','10th Street'].map(site => ({
+               label: site,
+               data: rawData.filter(d=>d.site===site).map(d=>({x:d.temp,y:d.richness})),
+               backgroundColor: siteColors[site],
+               pointRadius: 10
+           }))},
+           options: { responsive: true, maintainAspectRatio: false,
+                      scales: { x: { title: { display: true, text: 'Temperature (°C)' }, min:12, max:13.5 },
+                                y: { beginAtZero: true, title: { display: true, text: 'Species Richness' }}}}
+       });
    </script>
-
-
 </body>
 </html>
-
