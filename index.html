@@ -223,3 +223,110 @@
                                color: 'rgba(0, 0, 0, 0.05)'
                            }
                        }
+                   },
+                   plugins: {
+                       tooltip: {
+                           callbacks: {
+                               label: function(context) {
+                                   let label = context.dataset.label || '';
+                                   if (label) {
+                                       label += ': ';
+                                   }
+                                   label += `(Clarity: ${context.parsed.x}, Richness: ${context.parsed.y})`;
+                                   return label;
+                               }
+                           }
+                       }
+                   }
+               }
+           });
+       })();
+
+       // --- Chart 3: Scatter Plot (Temperature vs. Richness) ---
+       (function() {
+           const ctx = document.getElementById('scatterTempChart').getContext('2d');
+          
+           const scatterData = {
+               'Log Skid': rawData.filter(d => d.site === 'Log Skid').map(d => ({ x: d.temp, y: d.richness })),
+               'Langus': rawData.filter(d => d.site === 'Langus').map(d => ({ x: d.temp, y: d.richness })),
+               '10th Street': rawData.filter(d => d.site === '10th Street').map(d => ({ x: d.temp, y: d.richness })),
+           };
+
+           new Chart(ctx, {
+               type: 'scatter',
+               data: {
+                   datasets: [
+                       {
+                           label: 'Log Skid',
+                           data: scatterData['Log Skid'],
+                           backgroundColor: siteColors['Log Skid'],
+                           pointRadius: 8,
+                           pointHoverRadius: 10
+                       },
+                       {
+                           label: 'Langus',
+                           data: scatterData['Langus'],
+                           backgroundColor: siteColors['Langus'],
+                           pointRadius: 8,
+                           pointHoverRadius: 10
+                       },
+                       {
+                           label: '10th Street',
+                           data: scatterData['10th Street'],
+                           backgroundColor: siteColors['10th Street'],
+                           pointRadius: 8,
+                           pointHoverRadius: 10
+                       }
+                   ]
+               },
+               options: {
+                   responsive: true,
+                   maintainAspectRatio: false,
+                   animation: {
+                       duration: 1500,
+                       easing: 'easeInOutCubic'
+                   },
+                   scales: {
+                       x: {
+                           title: {
+                               display: true,
+                               text: 'Temperature (°C)'
+                           },
+                           min: 12,
+                           max: 13.5,
+                           grid: {
+                               color: 'rgba(0, 0, 0, 0.05)'
+                           }
+                       },
+                       y: {
+                           title: {
+                               display: true,
+                               text: 'Species Richness'
+                           },
+                           beginAtZero: true,
+                           grid: {
+                               color: 'rgba(0, 0, 0, 0.05)'
+                           }
+                       }
+                   },
+                   plugins: {
+                       tooltip: {
+                           callbacks: {
+                               label: function(context) {
+                                   let label = context.dataset.label || '';
+                                   if (label) {
+                                       label += ': ';
+                                   }
+                                   label += `(Temp: ${context.parsed.x}, Richness: ${context.parsed.y})`;
+                                   return label;
+                               }
+                           }
+                       }
+                   }
+               }
+           });
+       })();
+   </script>
+ 
+</body>
+</html>
