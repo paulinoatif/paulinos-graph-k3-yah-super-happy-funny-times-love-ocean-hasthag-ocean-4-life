@@ -51,53 +51,81 @@
    </div>
 
    <script>
-       const rawData = [
-           { site: 'Log Skid', year: 2018, temp: 12.59, richness: 4, clarity: 3.5 },
-           { site: 'Langus', year: 2018, temp: 12.43, richness: 5, clarity: 4.0 },
-           { site: '10th Street', year: 2018, temp: 12.67, richness: 2, clarity: 3.0 },
-           { site: 'Log Skid', year: 2023, temp: 12.80, richness: 9, clarity: 5.75 },
-           { site: 'Langus', year: 2023, temp: 12.89, richness: 7, clarity: 3.5 },
-           { site: '10th Street', year: 2023, temp: 12.94, richness: 12, clarity: 4.63 }
-       ];
+       // Wait for page to fully load before drawing charts
+       document.addEventListener('DOMContentLoaded', function() {
+           const rawData = [
+               { site: 'Log Skid', year: 2018, temp: 12.59, richness: 4, clarity: 3.5 },
+               { site: 'Langus', year: 2018, temp: 12.43, richness: 5, clarity: 4.0 },
+               { site: '10th Street', year: 2018, temp: 12.67, richness: 2, clarity: 3.0 },
+               { site: 'Log Skid', year: 2023, temp: 12.80, richness: 9, clarity: 5.75 },
+               { site: 'Langus', year: 2023, temp: 12.89, richness: 7, clarity: 3.5 },
+               { site: '10th Street', year: 2023, temp: 12.94, richness: 12, clarity: 4.63 }
+           ];
 
-       const siteColors = { 'Log Skid': 'rgba(239,68,68,0.8)', 'Langus': 'rgba(59,130,246,0.8)', '10th Street': 'rgba(16,185,129,0.8)' };
+           const siteColors = { 'Log Skid': 'rgba(239,68,68,0.8)', 'Langus': 'rgba(59,130,246,0.8)', '10th Street': 'rgba(16,185,129,0.8)' };
 
-       // Bar chart
-       new Chart(document.getElementById('barChart'), {
-           type: 'bar',
-           data: { labels: ['Log Skid','Langus','10th Street'],
-                   datasets: [{ label: '2018', data: [4,5,2], backgroundColor: 'rgba(156,163,175,0.7)' },
-                              { label: '2023', data: [9,7,12], backgroundColor: 'rgba(59,130,246,0.7)' }]},
-           options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'top' } },
-                      scales: { y: { beginAtZero: true, title: { display: true, text: 'Species Count' }}} }
-       });
+           // Bar chart
+           const barCtx = document.getElementById('barChart').getContext('2d');
+           new Chart(barCtx, {
+               type: 'bar',
+               data: { 
+                   labels: ['Log Skid','Langus','10th Street'],
+                   datasets: [
+                       { label: '2018', data: [4,5,2], backgroundColor: 'rgba(156,163,175,0.7)' },
+                       { label: '2023', data: [9,7,12], backgroundColor: 'rgba(59,130,246,0.7)' }
+                   ]
+               },
+               options: { 
+                   responsive: true, 
+                   maintainAspectRatio: false, 
+                   plugins: { legend: { position: 'top' } },
+                   scales: { y: { beginAtZero: true, title: { display: true, text: 'Species Count' }}} 
+               }
+           });
 
-       // Clarity scatter
-       new Chart(document.getElementById('scatterClarityChart'), {
-           type: 'scatter',
-           data: { datasets: ['Log Skid','Langus','10th Street'].map(site => ({
-               label: site,
-               data: rawData.filter(d=>d.site===site).map(d=>({x:d.clarity,y:d.richness})),
-               backgroundColor: siteColors[site],
-               pointRadius: 10
-           }))},
-           options: { responsive: true, maintainAspectRatio: false,
-                      scales: { x: { title: { display: true, text: 'Water Clarity (Secchi depth, m)' }},
-                                y: { beginAtZero: true, title: { display: true, text: 'Species Richness' }}}}
-       });
+           // Clarity scatter
+           const clarityCtx = document.getElementById('scatterClarityChart').getContext('2d');
+           new Chart(clarityCtx, {
+               type: 'scatter',
+               data: { 
+                   datasets: ['Log Skid','Langus','10th Street'].map(site => ({
+                       label: site,
+                       data: rawData.filter(d=>d.site===site).map(d=>({x:d.clarity,y:d.richness})),
+                       backgroundColor: siteColors[site],
+                       pointRadius: 10
+                   }))
+               },
+               options: { 
+                   responsive: true, 
+                   maintainAspectRatio: false,
+                   scales: { 
+                       x: { title: { display: true, text: 'Water Clarity (Secchi depth, m)' }},
+                       y: { beginAtZero: true, title: { display: true, text: 'Species Richness' }}
+                   }
+               }
+           });
 
-       // Temperature scatter
-       new Chart(document.getElementById('scatterTempChart'), {
-           type: 'scatter',
-           data: { datasets: ['Log Skid','Langus','10th Street'].map(site => ({
-               label: site,
-               data: rawData.filter(d=>d.site===site).map(d=>({x:d.temp,y:d.richness})),
-               backgroundColor: siteColors[site],
-               pointRadius: 10
-           }))},
-           options: { responsive: true, maintainAspectRatio: false,
-                      scales: { x: { title: { display: true, text: 'Temperature (°C)' }, min:12, max:13.5 },
-                                y: { beginAtZero: true, title: { display: true, text: 'Species Richness' }}}}
+           // Temperature scatter
+           const tempCtx = document.getElementById('scatterTempChart').getContext('2d');
+           new Chart(tempCtx, {
+               type: 'scatter',
+               data: { 
+                   datasets: ['Log Skid','Langus','10th Street'].map(site => ({
+                       label: site,
+                       data: rawData.filter(d=>d.site===site).map(d=>({x:d.temp,y:d.richness})),
+                       backgroundColor: siteColors[site],
+                       pointRadius: 10
+                   }))
+               },
+               options: { 
+                   responsive: true, 
+                   maintainAspectRatio: false,
+                   scales: { 
+                       x: { title: { display: true, text: 'Temperature (°C)' }, min:12, max:13.5 },
+                       y: { beginAtZero: true, title: { display: true, text: 'Species Richness' }}
+                   }
+               }
+           });
        });
    </script>
 </body>
