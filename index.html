@@ -1,100 +1,34 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-   <meta charset="UTF-8">
-   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   <title>Snohomish River Data Graphs</title>
-   <script src="https://cdn.tailwindcss.com"></script>
-   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-   <style>
-       body { font-family: 'Inter', sans-serif; background-color: #f3f4f6; }
-       @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
-   </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Snohomish River Estuary Biodiversity</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f9fafb; margin: 0; padding: 0; }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        figure { margin: 3rem 0; }
+        figcaption { font-size: 0.95rem; line-height: 1.6; }
+    </style>
 </head>
-<body class="p-4 md:p-8">
-   <div class="max-w-7xl mx-auto">
-       <h1 class="text-3xl font-bold text-gray-900 mb-8">Snohomish River Research: Data Visualization</h1>
+<body class="min-h-screen bg-gray-50">
 
-       <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+<div class="max-w-5xl mx-auto px-6 py-12">
 
-           <!-- Figure 1 -->
-           <figure class="bg-white p-8 rounded-lg shadow-lg border border-gray-200">
-               <h2 class="text-xl font-semibold mb-4 text-gray-800">Species Richness by Site (2018 vs. 2023)</h2>
-               <div class="h-96"><canvas id="barChart"></canvas></div>
-               <figcaption class="mt-6 pt-4 border-t border-gray-300 text-sm text-gray-700 leading-relaxed">
-                   <strong>Figure 1.</strong> Comparison of Species Richness Across Three Estuary Sites (10th Street, Log Skid, and Langus) Between October 2018 and October 2023.<br><br>
-                   Number of unique species observed (species richness) at each of the three monitoring sites over two collection years. Species richness increased across all three monitoring sites when comparing the 2018 and 2023 data points. The overall minimum richness (2 species) was observed at 10th Street in 2018. The overall maximum richness (12 species) was recorded at 10th Street in 2023.
-               </figcaption>
-           </figure>
+    <header class="text-center mb-16">
+        <h1 class="text-4xl font-bold text-gray-900 mb-4">
+            Snohomish River Estuary: Benthic Macroinvertebrate Monitoring
+        </h1>
+        <p class="text-lg text-gray-600">October 2018 & October 2023 • Three estuarine sites</p>
+    </header>
 
-           <!-- Figure 2 -->
-           <figure class="bg-white p-8 rounded-lg shadow-lg border border-gray-200">
-               <h2 class="text-xl font-semibold mb-4 text-gray-800">Water Clarity vs. Species Richness</h2>
-               <div class="h-96"><canvas id="scatterClarityChart"></canvas></div>
-               <figcaption class="mt-6 pt-4 border-t border-gray-300 text-sm text-gray-700 leading-relaxed">
-                   <strong>Figure 2.</strong> Relationship Between Water Clarity and Species Richness Across the Snohomish River Estuary (October 2018 and October 2023).<br><br>
-                   Water clarity (Secchi depth in meters) vs observed species richness (count) for all six data points collected in the estuary during the two monitoring years.
-               </figcaption>
-           </figure>
-
-           <!-- Figure 3 -->
-           <figure class="bg-white p-8 rounded-lg shadow-lg border border-gray-200 lg:col-span-2">
-               <h2 class="text-xl font-semibold mb-4 text-gray-800">Temperature vs. Species Richness</h2>
-               <div class="h-96"><canvas id="scatterTempChart"></canvas></div>
-               <figcaption class="mt-6 pt-4 border-t border-gray-300 text-sm text-gray-700 leading-relaxed">
-                   <strong>Figure 3.</strong> Relationship Between Water Temperature and Species Richness Across the Snohomish River Estuary (October 2018 and October 2023).<br><br>
-                   Water temperature (°C) vs observed species richness (count). Higher richness values were observed in the warmer 2023 cluster.
-               </figcaption>
-           </figure>
-
-       </div>
-   </div>
-
-   <script>
-       const rawData = [
-           { site: 'Log Skid', year: 2018, temp: 12.59, richness: 4, clarity: 3.5 },
-           { site: 'Langus', year: 2018, temp: 12.43, richness: 5, clarity: 4.0 },
-           { site: '10th Street', year: 2018, temp: 12.67, richness: 2, clarity: 3.0 },
-           { site: 'Log Skid', year: 2023, temp: 12.80, richness: 9, clarity: 5.75 },
-           { site: 'Langus', year: 2023, temp: 12.89, richness: 7, clarity: 3.5 },
-           { site: '10th Street', year: 2023, temp: 12.94, richness: 12, clarity: 4.63 }
-       ];
-
-       const siteColors = { 'Log Skid': 'rgba(239,68,68,0.8)', 'Langus': 'rgba(59,130,246,0.8)', '10th Street': 'rgba(16,185,129,0.8)' };
-
-       // Chart 1 – Bar
-       new Chart(document.getElementById('barChart'), {
-           type: 'bar', data: { labels: ['Log Skid','Langus','10th Street'],
-           datasets: [
-               { label: '2018', data: [4,5,2], backgroundColor: 'rgba(156,163,175,0.7)' },
-               { label: '2023', data: [9,7,12], backgroundColor: 'rgba(59,130,246,0.7)' }
-           ]},
-           options: { responsive: true, maintainAspectRatio: false, animation: { duration: 1500 },
-               scales: { y: { beginAtZero: true, title: { display: true, text: 'Species Count' }}}
-           }
-       });
-
-       // Chart 2 – Clarity
-       new Chart(document.getElementById('scatterClarityChart'), {
-           type: 'scatter', data: { datasets: Object.keys(siteColors).map(site=>({
-               label: site, data: rawData.filter(d=>d.site===site).map(d=>({x:d.clarity,y:d.richness})),
-               backgroundColor: siteColors[site], pointRadius: 10
-           }))},
-           options: { responsive:true, maintainAspectRatio:false,
-               scales: { x: { title: { display:true, text:'Water Clarity (m)'}}, y: { title: { display:true, text:'Species Richness'}, beginAtZero:true }}
-           }
-       });
-
-       // Chart 3 – Temperature
-       new Chart(document.getElementById('scatterTempChart'), {
-           type: 'scatter', data: { datasets: Object.keys(siteColors).map(site=>({
-               label: site, data: rawData.filter(d=>d.site===site).map(d=>({x:d.temp,y:d.richness})),
-               backgroundColor: siteColors[site], pointRadius: 10
-           }))},
-           options: { responsive:true, maintainAspectRatio:false,
-               scales: { x: { title: { display:true, text:'Temperature (°C)'}, min:12, max:13.5 }, y: { beginAtZero:true, title: { display:true, text:'Species Richness'}}}
-           }
-       });
-   </script>
-</body>
-</html>
+    <!-- Figure 1 -->
+    <figure class="bg-white rounded-2xl shadow-lg overflow-hidden">
+        <div class="p-8">
+            <h2 class="text-2xl font-semibold text-gray-800 mb-6">Species Richness by Site and Year</h2>
+            <div class="h-96"><canvas id="barChart"></canvas></div>
+        </div>
+        <figcaption class="bg-gray-50 px-8 py-6 text-gray-700 border-t">
+            <strong>Figure 1.</strong> Species richness of benthic macroinvertebrates at three Snohomish River estuary sites in October 2018 and October 2023. Samples were collected using a 15 cm Petit Ponar grab (n=3 per site), sieved through 500 µm mesh, and identified to family level. Species richness increased at
